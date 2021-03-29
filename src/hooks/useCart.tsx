@@ -34,7 +34,20 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
   const addProduct = async (productId: number) => {
     try {
-      // TODO
+      const response = await api.get<Product>(`products/${productId}`);
+      const productToAdd = response.data;
+      const index = cart.findIndex(item => item.id === productToAdd.id)
+      let newCart = cart;
+
+      if(index >= 0){
+        newCart[index].amount += 1;        
+      } else {
+        const newProduct= { ...productToAdd, amount: 1 };
+        newCart = [...cart, newProduct];
+      }
+      
+      setCart(newCart);
+      localStorage.setItem('@RocketShoes:cart', JSON.stringify(newCart));
     } catch {
       // TODO
     }
