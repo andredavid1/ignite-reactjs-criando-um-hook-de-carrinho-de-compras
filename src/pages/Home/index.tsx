@@ -17,18 +17,18 @@ interface ProductFormatted extends Product {
   priceFormatted: string;
 }
 
-// interface CartItemsAmount {
-//   [key: number]: number;
-// }
+interface CartItemsAmount {
+  [key: number]: number;
+}
 
 const Home = (): JSX.Element => {
   const [products, setProducts] = useState<ProductFormatted[]>([]);
   const { addProduct, cart } = useCart();
 
-  console.log('tamanho carrinho: ', cart.length);
-  // const cartItemsAmount = cart.reduce((sumAmount, product) => {
-  //   // TODO
-  // }, {} as CartItemsAmount)
+  const cartItemsAmount = cart.reduce((sumAmount, product) => {
+    sumAmount[product.id] = product.amount;
+    return sumAmount
+  }, {} as CartItemsAmount)
 
   useEffect(() => {
     async function loadProducts() {
@@ -45,7 +45,7 @@ const Home = (): JSX.Element => {
     }
 
     loadProducts();
-  }, []);
+  }, [products]);
 
   function handleAddProduct(id: number) {
     addProduct(id);
@@ -53,7 +53,6 @@ const Home = (): JSX.Element => {
 
   return (
     <ProductList>
-      {console.log(cart)}  
       {products && products.map(product => (
         <li key={product.id}>
           <img src={product.image} alt={product.title} />
@@ -66,7 +65,7 @@ const Home = (): JSX.Element => {
           >
             <div data-testid="cart-product-quantity">
               <MdAddShoppingCart size={16} color="#FFF" />
-              {/* {cartItemsAmount[product.id] || 0} */} 2
+              {cartItemsAmount[product.id] || 0}
             </div>
 
             <span>ADICIONAR AO CARRINHO</span>
